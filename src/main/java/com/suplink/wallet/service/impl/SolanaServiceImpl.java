@@ -4,12 +4,27 @@ import com.suplink.wallet.enums.ChainType;
 import com.suplink.wallet.model.BlockDto;
 import com.suplink.wallet.model.TransactionDto;
 import com.suplink.wallet.service.AbstractChainService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.Executor;
 
 @Service("SOL")
 public class SolanaServiceImpl extends AbstractChainService {
+
+    private final Executor executor;
+
+    @Autowired
+    public SolanaServiceImpl(@Qualifier("solTaskExecutor") Executor executor) {
+        this.executor = executor;
+    }
+
+    @Override
+    protected Executor getExecutor() {
+        return this.executor;
+    }
 
     @Override
     public ChainType getChainType() {

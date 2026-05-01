@@ -10,28 +10,33 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Configuration
 public class ThreadPoolConfig {
 
-    /**
-     * Dedicated thread pool for handling external RPC requests.
-     * This isolates I/O-intensive tasks from the main Tomcat web thread pool,
-     * preventing thread pool exhaustion and improving system resilience.
-     */
-    @Bean("rpcTaskExecutor")
-    public Executor rpcTaskExecutor() {
+    private ThreadPoolTaskExecutor createExecutor(String threadNamePrefix, int corePoolSize, int maxPoolSize, int queueCapacity) {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        // Core number of threads
-        executor.setCorePoolSize(10);
-        // Max number of threads
-        executor.setMaxPoolSize(20);
-        // Queue capacity
-        executor.setQueueCapacity(50);
-        // Thread idle time
+        executor.setCorePoolSize(corePoolSize);
+        executor.setMaxPoolSize(maxPoolSize);
+        executor.setQueueCapacity(queueCapacity);
         executor.setKeepAliveSeconds(60);
-        // Thread name prefix for easy identification in logs
-        executor.setThreadNamePrefix("rpc-exec-");
-        // Rejection policy: Caller runs the task, providing a back-pressure mechanism
+        executor.setThreadNamePrefix(threadNamePrefix);
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
-        // Initialize the thread pool
         executor.initialize();
         return executor;
+    }
+
+    @Bean("btcTaskExecutor")
+    public Executor btcTaskExecutor() {
+        // Assuming BTC is a low-frequency chain
+        return createExecutor("btc-rpc-", 5, 10, 20);
+    }
+
+    @Bean("ethTaskExecutor")
+    public Executor ethTaskExecutor() {
+        // Assuming ETH is a high-frequency chain
+        return createExecutor("eth-rpc-", 10, 20, 50);
+    }
+
+    @Bean("solTaskExecutor")
+    public Executor solTaskExecutor() {
+        // Assuming SOL is a high-frequency chain with fast responses
+        return createExecutor("sol-rpc-", 10, 20, 50);
     }
 }

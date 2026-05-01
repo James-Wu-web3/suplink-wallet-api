@@ -2,8 +2,6 @@ package com.suplink.wallet.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -14,13 +12,15 @@ public abstract class AbstractChainService implements IChainService {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractChainService.class);
 
-    @Autowired
-    @Qualifier("rpcTaskExecutor")
-    private Executor rpcTaskExecutor;
+    /**
+     * Abstract method to be implemented by subclasses to provide their specific thread pool.
+     * @return The executor for the specific chain.
+     */
+    protected abstract Executor getExecutor();
 
     /**
      * Template method to execute time-consuming RPC calls asynchronously.
-     * It handles threading, logging, timing, and exception handling.
+     * It uses the executor provided by the subclass to achieve thread pool isolation.
      *
      * @param action The business logic to execute.
      * @param <T> The return type of the action.
@@ -28,22 +28,22 @@ public abstract class AbstractChainService implements IChainService {
      */
     protected <T> T executeAsync(Supplier<T> action) {
         long startTime = System.nanoTime();
-        CompletableFuture<T> future = CompletableFuture.supplyAsync(action, rpcTaskExecutor);
+        // Get the specific executor from the subclass
+        Executor executor = getExecutor();
+        CompletableFuture<T> future = CompletableFuture.supplyAsync(action, executor);
 
         try {
-            // Block and get the result. In a real async scenario, you might return the Future.
-            // For this controller-service model, we block to await the result before responding.
-            T result = future.get(); // You can specify a timeout here, e.g., future.get(30, TimeUnit.SECONDS);
+            // Block and get the result.
+            T result = future.get(); // Consider adding a timeout, e.g., future.get(30, TimeUnit.SECONDS);
 
             long duration = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime);
-            logger.info("RPC call to {} succeeded in {} ms", getChainType(), duration);
+            logger.info("RPC call to {} succeeded in {} ms on thread pool {}", getChainType(), duration, executor);
 
             return result;
         } catch (Exception e) {
             long duration = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime);
-            logger.error("RPC call to {} failed after {} ms", getChainType(), duration, e);
-            // Depending on requirements, you might want to rethrow a custom exception
-            // or return a default value.
+            logger.error("RPC call to {} failed after {} ms on thread pool {}", getChainType(), duration, executor, e);
+
             throw new RuntimeException("Failed to execute RPC call for chain " + getChainType(), e);
         }
     }
