@@ -9,6 +9,7 @@ import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
 import org.lognet.springboot.grpc.GRpcService;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @GRpcService
@@ -24,10 +25,8 @@ public class WalletGrpcService extends WalletServiceGrpc.WalletServiceImplBase {
         String address = "";
 
         if (service instanceof BitcoinServiceImpl) {
-            // Use the specialized method for Bitcoin
             address = ((BitcoinServiceImpl) service).convertAddress(request.getPublicKey(), request.getAddressType());
         } else {
-            // Use the generic method for other chains
             address = service.convertAddress(request.getPublicKey());
         }
 
@@ -84,6 +83,18 @@ public class WalletGrpcService extends WalletServiceGrpc.WalletServiceImplBase {
                 responseObserver.onNext(grpcMapper.toGrpcTransaction(dto));
             }
         }
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getAccountBalance(GetAccountBalanceRequest request, StreamObserver<GetAccountBalanceResponse> responseObserver) {
+        IChainService service = chainServiceFactory.getService(convertChainType(request.getChainType()));
+        BigDecimal balance = service.getAccountBalance(request.getAddress());
+
+        GetAccountBalanceResponse response = GetAccountBalanceResponse.newBuilder()
+                .setBalance(balance.toPlainString())
+                .build();
+        responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
 

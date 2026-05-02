@@ -13,9 +13,7 @@ import jakarta.annotation.PostConstruct;
 import java.net.URL;
 import java.util.Base64;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
@@ -24,130 +22,112 @@ import java.util.concurrent.atomic.AtomicReference;
 public class BitcoinNodeManager {
 
     @Data
-    public static class BitcoinNodeProperties {
+    public static class ClusterProperties {
         private String alias;
         private String url;
         private String rpcUser;
         private String rpcPassword;
     }
 
-    private List<BitcoinNodeProperties> nodes;
-    private String primaryNodeAlias;
+    private ClusterProperties primary;
+    private ClusterProperties standby;
 
-    @Value("${bitcoin.health-check.max-block-height-difference:5}")
+    @Value("${bitcoin.health-check.max-block-height-difference:10}")
     private int maxBlockHeightDifference;
 
-    private final Map<String, BitcoinRpcApi> clients = new ConcurrentHashMap<>();
-    private final Map<String, Long> nodeBlockHeights = new ConcurrentHashMap<>();
+    private BitcoinRpcApi primaryClient;
+    private BitcoinRpcApi standbyClient;
+
     private final AtomicReference<BitcoinRpcApi> activeClient = new AtomicReference<>();
     private final AtomicReference<String> activeClientAlias = new AtomicReference<>();
 
-    public void setNodes(List<BitcoinNodeProperties> nodes) {
-        this.nodes = nodes;
-    }
-
-    public void setPrimaryNodeAlias(String primaryNodeAlias) {
-        this.primaryNodeAlias = primaryNodeAlias;
+    // Setters for Spring Boot to inject properties
+    public void setCluster(Map<String, ClusterProperties> cluster) {
+        this.primary = cluster.get("primary");
+        this.standby = cluster.get("standby");
     }
 
     @PostConstruct
     public void init() {
-        if (nodes == null || nodes.isEmpty()) {
-            log.error("No Bitcoin nodes configured. Please check 'bitcoin.nodes' in application.properties.");
-            throw new IllegalStateException("No Bitcoin nodes configured.");
+        if (primary == null || standby == null) {
+            log.error("Primary and/or standby Bitcoin cluster properties are not configured. Check 'bitcoin.cluster.*'");
+            throw new IllegalStateException("Bitcoin cluster configuration is incomplete.");
         }
 
-        for (BitcoinNodeProperties props : nodes) {
-            try {
-                URL url = new URL(props.getUrl());
-                JsonRpcHttpClient client = new JsonRpcHttpClient(url);
+        this.primaryClient = createClient(primary);
+        this.standbyClient = createClient(standby);
 
-                String auth = props.getRpcUser() + ":" + props.getRpcPassword();
-                String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes());
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Basic " + encodedAuth);
-                client.setHeaders(headers);
+        log.info("Initialized clients for primary ({}) and standby ({}) clusters.", primary.getAlias(), standby.getAlias());
 
-                BitcoinRpcApi rpcApi = ProxyUtil.createClientProxy(
-                        getClass().getClassLoader(),
-                        BitcoinRpcApi.class,
-                        client);
-
-                clients.put(props.getAlias(), rpcApi);
-                log.info("Initialized Bitcoin RPC client for node: {}", props.getAlias());
-            } catch (Exception e) {
-                log.error("Failed to initialize Bitcoin node {}: {}", props.getAlias(), e.getMessage(), e);
-                throw new IllegalArgumentException("Invalid Bitcoin node configuration", e);
-            }
-        }
-
-        if (primaryNodeAlias != null && clients.containsKey(primaryNodeAlias)) {
-            activeClient.set(clients.get(primaryNodeAlias));
-            activeClientAlias.set(primaryNodeAlias);
-            log.info("Initial primary Bitcoin node set to: {}", primaryNodeAlias);
-        } else {
-            BitcoinNodeProperties firstNode = nodes.get(0);
-            activeClient.set(clients.get(firstNode.getAlias()));
-            activeClientAlias.set(firstNode.getAlias());
-            log.warn("Primary node alias '{}' not found or not specified. Falling back to first configured node: {}",
-                    primaryNodeAlias, firstNode.getAlias());
-        }
+        // Set initial active client to primary
+        activeClient.set(primaryClient);
+        activeClientAlias.set(primary.getAlias());
+        log.info("Initial active Bitcoin cluster set to: {}", primary.getAlias());
 
         performHealthCheck();
     }
 
-    @Scheduled(fixedRateString = "${bitcoin.health-check.interval-ms:10000}")
+    private BitcoinRpcApi createClient(ClusterProperties props) {
+        try {
+            URL url = new URL(props.getUrl());
+            JsonRpcHttpClient client = new JsonRpcHttpClient(url);
+            String auth = props.getRpcUser() + ":" + props.getRpcPassword();
+            String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes());
+            Map<String, String> headers = new HashMap<>();
+            headers.put("Authorization", "Basic " + encodedAuth);
+            client.setHeaders(headers);
+            return ProxyUtil.createClientProxy(getClass().getClassLoader(), BitcoinRpcApi.class, client);
+        } catch (Exception e) {
+            log.error("Failed to create RPC client for cluster {}: {}", props.getAlias(), e.getMessage(), e);
+            throw new RuntimeException("Failed to create RPC client for " + props.getAlias(), e);
+        }
+    }
+
+    @Scheduled(fixedRateString = "${bitcoin.health-check.interval-ms:15000}")
     public void performHealthCheck() {
-        log.debug("Performing Bitcoin node health check...");
-        long maxObservedHeight = 0;
-        String bestNodeAlias = null;
+        log.debug("Performing Bitcoin cluster health check...");
+        long primaryHeight = -1;
+        long standbyHeight = -1;
 
-        for (Map.Entry<String, BitcoinRpcApi> entry : clients.entrySet()) {
-            String alias = entry.getKey();
-            BitcoinRpcApi client = entry.getValue();
-            try {
-                long currentHeight = client.getBlockCount();
-                nodeBlockHeights.put(alias, currentHeight);
-                log.debug("Node {} current block height: {}", alias, currentHeight);
+        try {
+            primaryHeight = primaryClient.getBlockCount();
+            log.debug("Primary cluster ({}) height: {}", primary.getAlias(), primaryHeight);
+        } catch (Exception e) {
+            log.warn("Health check failed for primary cluster ({}): {}", primary.getAlias(), e.getMessage());
+        }
 
-                if (currentHeight > maxObservedHeight) {
-                    maxObservedHeight = currentHeight;
-                    bestNodeAlias = alias;
-                }
-            } catch (Exception e) {
-                log.error("Health check failed for Bitcoin node {}: {}", alias, e.getMessage());
-                nodeBlockHeights.remove(alias);
-            }
+        try {
+            standbyHeight = standbyClient.getBlockCount();
+            log.debug("Standby cluster ({}) height: {}", standby.getAlias(), standbyHeight);
+        } catch (Exception e) {
+            log.warn("Health check failed for standby cluster ({}): {}", standby.getAlias(), e.getMessage());
         }
 
         String currentActiveAlias = activeClientAlias.get();
-        if (currentActiveAlias != null && nodeBlockHeights.containsKey(currentActiveAlias)) {
-            Long currentActiveHeight = nodeBlockHeights.get(currentActiveAlias);
-            if (currentActiveHeight != null && (maxObservedHeight - currentActiveHeight) <= maxBlockHeightDifference) {
-                log.debug("Current primary node {} is healthy.", currentActiveAlias);
-                return;
-            } else {
-                log.warn("Current primary node {} is unhealthy or behind. Initiating failover.", currentActiveAlias);
-            }
-        } else if (currentActiveAlias != null) {
-            log.warn("Current primary node {} is down. Initiating failover.", currentActiveAlias);
-        }
 
-        if (bestNodeAlias != null && !bestNodeAlias.equals(currentActiveAlias)) {
-            activeClient.set(clients.get(bestNodeAlias));
-            activeClientAlias.set(bestNodeAlias);
-            log.info("Failover successful. New primary Bitcoin node set to: {}", bestNodeAlias);
-        } else if (bestNodeAlias == null) {
-            log.error("No healthy Bitcoin nodes found. Service might be degraded.");
-            activeClient.set(null);
-            activeClientAlias.set(null);
+        // Failover from Primary to Standby
+        if (primary.getAlias().equals(currentActiveAlias)) {
+            boolean primaryIsUnhealthy = (primaryHeight == -1) || (standbyHeight > primaryHeight && (standbyHeight - primaryHeight) > maxBlockHeightDifference);
+            if (primaryIsUnhealthy && standbyHeight != -1) {
+                log.warn("Primary cluster '{}' is unhealthy or lagging. Failing over to standby cluster '{}'.", primary.getAlias(), standby.getAlias());
+                activeClient.set(standbyClient);
+                activeClientAlias.set(standby.getAlias());
+            }
+        } 
+        // Failback from Standby to Primary
+        else if (standby.getAlias().equals(currentActiveAlias)) {
+            if (primaryHeight != -1) { // If primary cluster comes back online
+                log.info("Primary cluster '{}' is back online. Failing back to primary.", primary.getAlias());
+                activeClient.set(primaryClient);
+                activeClientAlias.set(primary.getAlias());
+            }
         }
     }
 
     public BitcoinRpcApi getActiveClient() {
         BitcoinRpcApi client = activeClient.get();
         if (client == null) {
-            throw new IllegalStateException("No active Bitcoin RPC client available. All configured nodes might be down.");
+            throw new IllegalStateException("No active Bitcoin cluster available.");
         }
         return client;
     }

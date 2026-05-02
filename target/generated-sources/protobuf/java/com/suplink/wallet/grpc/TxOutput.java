@@ -83,10 +83,6 @@ private static final long serialVersionUID = 0L;
   @SuppressWarnings("serial")
   private volatile java.lang.Object amount_ = "";
   /**
-   * <pre>
-   * Use string for precision
-   * </pre>
-   *
    * <code>string amount = 2;</code>
    * @return The amount.
    */
@@ -104,10 +100,6 @@ private static final long serialVersionUID = 0L;
     }
   }
   /**
-   * <pre>
-   * Use string for precision
-   * </pre>
-   *
    * <code>string amount = 2;</code>
    * @return The bytes for amount.
    */
@@ -550,10 +542,6 @@ private static final long serialVersionUID = 0L;
 
     private java.lang.Object amount_ = "";
     /**
-     * <pre>
-     * Use string for precision
-     * </pre>
-     *
      * <code>string amount = 2;</code>
      * @return The amount.
      */
@@ -570,10 +558,6 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <pre>
-     * Use string for precision
-     * </pre>
-     *
      * <code>string amount = 2;</code>
      * @return The bytes for amount.
      */
@@ -591,10 +575,6 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
-     * <pre>
-     * Use string for precision
-     * </pre>
-     *
      * <code>string amount = 2;</code>
      * @param value The amount to set.
      * @return This builder for chaining.
@@ -608,10 +588,6 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <pre>
-     * Use string for precision
-     * </pre>
-     *
      * <code>string amount = 2;</code>
      * @return This builder for chaining.
      */
@@ -622,10 +598,6 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <pre>
-     * Use string for precision
-     * </pre>
-     *
      * <code>string amount = 2;</code>
      * @param value The bytes for amount to set.
      * @return This builder for chaining.

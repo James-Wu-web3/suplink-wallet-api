@@ -3,9 +3,6 @@ package com.suplink.wallet.grpc;
 import static io.grpc.MethodDescriptor.generateFullMethodName;
 
 /**
- * <pre>
- * The main service definition.
- * </pre>
  */
 @javax.annotation.Generated(
     value = "by gRPC proto compiler (version 1.58.0)",
@@ -204,6 +201,37 @@ public final class WalletServiceGrpc {
     return getGetTransactionsByAddressMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<com.suplink.wallet.grpc.GetAccountBalanceRequest,
+      com.suplink.wallet.grpc.GetAccountBalanceResponse> getGetAccountBalanceMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetAccountBalance",
+      requestType = com.suplink.wallet.grpc.GetAccountBalanceRequest.class,
+      responseType = com.suplink.wallet.grpc.GetAccountBalanceResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<com.suplink.wallet.grpc.GetAccountBalanceRequest,
+      com.suplink.wallet.grpc.GetAccountBalanceResponse> getGetAccountBalanceMethod() {
+    io.grpc.MethodDescriptor<com.suplink.wallet.grpc.GetAccountBalanceRequest, com.suplink.wallet.grpc.GetAccountBalanceResponse> getGetAccountBalanceMethod;
+    if ((getGetAccountBalanceMethod = WalletServiceGrpc.getGetAccountBalanceMethod) == null) {
+      synchronized (WalletServiceGrpc.class) {
+        if ((getGetAccountBalanceMethod = WalletServiceGrpc.getGetAccountBalanceMethod) == null) {
+          WalletServiceGrpc.getGetAccountBalanceMethod = getGetAccountBalanceMethod =
+              io.grpc.MethodDescriptor.<com.suplink.wallet.grpc.GetAccountBalanceRequest, com.suplink.wallet.grpc.GetAccountBalanceResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetAccountBalance"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.suplink.wallet.grpc.GetAccountBalanceRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.suplink.wallet.grpc.GetAccountBalanceResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new WalletServiceMethodDescriptorSupplier("GetAccountBalance"))
+              .build();
+        }
+      }
+    }
+    return getGetAccountBalanceMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -249,9 +277,6 @@ public final class WalletServiceGrpc {
   }
 
   /**
-   * <pre>
-   * The main service definition.
-   * </pre>
    */
   public interface AsyncService {
 
@@ -296,13 +321,17 @@ public final class WalletServiceGrpc {
         io.grpc.stub.StreamObserver<com.suplink.wallet.grpc.Transaction> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetTransactionsByAddressMethod(), responseObserver);
     }
+
+    /**
+     */
+    default void getAccountBalance(com.suplink.wallet.grpc.GetAccountBalanceRequest request,
+        io.grpc.stub.StreamObserver<com.suplink.wallet.grpc.GetAccountBalanceResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetAccountBalanceMethod(), responseObserver);
+    }
   }
 
   /**
    * Base class for the server implementation of the service WalletService.
-   * <pre>
-   * The main service definition.
-   * </pre>
    */
   public static abstract class WalletServiceImplBase
       implements io.grpc.BindableService, AsyncService {
@@ -314,9 +343,6 @@ public final class WalletServiceGrpc {
 
   /**
    * A stub to allow clients to do asynchronous rpc calls to service WalletService.
-   * <pre>
-   * The main service definition.
-   * </pre>
    */
   public static final class WalletServiceStub
       extends io.grpc.stub.AbstractAsyncStub<WalletServiceStub> {
@@ -378,13 +404,18 @@ public final class WalletServiceGrpc {
       io.grpc.stub.ClientCalls.asyncServerStreamingCall(
           getChannel().newCall(getGetTransactionsByAddressMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     */
+    public void getAccountBalance(com.suplink.wallet.grpc.GetAccountBalanceRequest request,
+        io.grpc.stub.StreamObserver<com.suplink.wallet.grpc.GetAccountBalanceResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetAccountBalanceMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
    * A stub to allow clients to do synchronous rpc calls to service WalletService.
-   * <pre>
-   * The main service definition.
-   * </pre>
    */
   public static final class WalletServiceBlockingStub
       extends io.grpc.stub.AbstractBlockingStub<WalletServiceBlockingStub> {
@@ -441,13 +472,17 @@ public final class WalletServiceGrpc {
       return io.grpc.stub.ClientCalls.blockingServerStreamingCall(
           getChannel(), getGetTransactionsByAddressMethod(), getCallOptions(), request);
     }
+
+    /**
+     */
+    public com.suplink.wallet.grpc.GetAccountBalanceResponse getAccountBalance(com.suplink.wallet.grpc.GetAccountBalanceRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetAccountBalanceMethod(), getCallOptions(), request);
+    }
   }
 
   /**
    * A stub to allow clients to do ListenableFuture-style rpc calls to service WalletService.
-   * <pre>
-   * The main service definition.
-   * </pre>
    */
   public static final class WalletServiceFutureStub
       extends io.grpc.stub.AbstractFutureStub<WalletServiceFutureStub> {
@@ -501,6 +536,14 @@ public final class WalletServiceGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetTransactionByHashMethod(), getCallOptions()), request);
     }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.suplink.wallet.grpc.GetAccountBalanceResponse> getAccountBalance(
+        com.suplink.wallet.grpc.GetAccountBalanceRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetAccountBalanceMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_CONVERT_ADDRESS = 0;
@@ -509,6 +552,7 @@ public final class WalletServiceGrpc {
   private static final int METHODID_GET_BLOCK_WITH_TRANSACTIONS = 3;
   private static final int METHODID_GET_TRANSACTION_BY_HASH = 4;
   private static final int METHODID_GET_TRANSACTIONS_BY_ADDRESS = 5;
+  private static final int METHODID_GET_ACCOUNT_BALANCE = 6;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -550,6 +594,10 @@ public final class WalletServiceGrpc {
         case METHODID_GET_TRANSACTIONS_BY_ADDRESS:
           serviceImpl.getTransactionsByAddress((com.suplink.wallet.grpc.GetTransactionsByAddressRequest) request,
               (io.grpc.stub.StreamObserver<com.suplink.wallet.grpc.Transaction>) responseObserver);
+          break;
+        case METHODID_GET_ACCOUNT_BALANCE:
+          serviceImpl.getAccountBalance((com.suplink.wallet.grpc.GetAccountBalanceRequest) request,
+              (io.grpc.stub.StreamObserver<com.suplink.wallet.grpc.GetAccountBalanceResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -611,6 +659,13 @@ public final class WalletServiceGrpc {
               com.suplink.wallet.grpc.GetTransactionsByAddressRequest,
               com.suplink.wallet.grpc.Transaction>(
                 service, METHODID_GET_TRANSACTIONS_BY_ADDRESS)))
+        .addMethod(
+          getGetAccountBalanceMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              com.suplink.wallet.grpc.GetAccountBalanceRequest,
+              com.suplink.wallet.grpc.GetAccountBalanceResponse>(
+                service, METHODID_GET_ACCOUNT_BALANCE)))
         .build();
   }
 
@@ -665,6 +720,7 @@ public final class WalletServiceGrpc {
               .addMethod(getGetBlockWithTransactionsMethod())
               .addMethod(getGetTransactionByHashMethod())
               .addMethod(getGetTransactionsByAddressMethod())
+              .addMethod(getGetAccountBalanceMethod())
               .build();
         }
       }

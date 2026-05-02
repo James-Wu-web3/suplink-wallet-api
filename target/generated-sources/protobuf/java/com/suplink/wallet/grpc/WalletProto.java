@@ -55,6 +55,16 @@ public final class WalletProto {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_com_suplink_wallet_grpc_GetTransactionsByAddressRequest_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_com_suplink_wallet_grpc_GetAccountBalanceRequest_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_com_suplink_wallet_grpc_GetAccountBalanceRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_com_suplink_wallet_grpc_GetAccountBalanceResponse_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_com_suplink_wallet_grpc_GetAccountBalanceResponse_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
     internal_static_com_suplink_wallet_grpc_TxInput_descriptor;
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -102,38 +112,45 @@ public final class WalletProto {
       "Type\022\017\n\007tx_hash\030\002 \001(\t\"j\n\037GetTransactions" +
       "ByAddressRequest\0226\n\nchain_type\030\001 \001(\0162\".c" +
       "om.suplink.wallet.grpc.ChainType\022\017\n\007addr" +
-      "ess\030\002 \001(\t\"*\n\007TxInput\022\017\n\007address\030\001 \001(\t\022\016\n" +
-      "\006amount\030\002 \001(\t\"+\n\010TxOutput\022\017\n\007address\030\001 \001" +
-      "(\t\022\016\n\006amount\030\002 \001(\t\"t\n\005Block\022\014\n\004hash\030\001 \001(" +
-      "\t\022\016\n\006height\030\002 \001(\003\022\021\n\ttimestamp\030\003 \001(\003\022:\n\014" +
-      "transactions\030\004 \003(\0132$.com.suplink.wallet." +
-      "grpc.Transaction\"\316\001\n\013Transaction\022\014\n\004hash" +
-      "\030\001 \001(\t\022\022\n\nblock_hash\030\002 \001(\t\022\024\n\014block_heig" +
-      "ht\030\003 \001(\003\022\021\n\ttimestamp\030\004 \001(\003\022\016\n\006status\030\005 " +
-      "\001(\t\0220\n\006inputs\030\006 \003(\0132 .com.suplink.wallet" +
-      ".grpc.TxInput\0222\n\007outputs\030\007 \003(\0132!.com.sup" +
-      "link.wallet.grpc.TxOutput*&\n\tChainType\022\007" +
-      "\n\003BTC\020\000\022\007\n\003ETH\020\001\022\007\n\003SOL\020\002*H\n\016BtcAddressT" +
-      "ype\022\013\n\007UNKNOWN\020\000\022\t\n\005P2PKH\020\001\022\n\n\006P2WPKH\020\002\022" +
-      "\010\n\004P2SH\020\003\022\010\n\004P2TR\020\0042\251\005\n\rWalletService\022q\n" +
-      "\016ConvertAddress\022..com.suplink.wallet.grp" +
-      "c.ConvertAddressRequest\032/.com.suplink.wa" +
-      "llet.grpc.ConvertAddressResponse\022k\n\014Vali" +
-      "dAddress\022,.com.suplink.wallet.grpc.Valid" +
-      "AddressRequest\032-.com.suplink.wallet.grpc" +
-      ".ValidAddressResponse\022`\n\016GetLatestBlock\022" +
-      "..com.suplink.wallet.grpc.GetLatestBlock" +
-      "Request\032\036.com.suplink.wallet.grpc.Block\022" +
-      "d\n\030GetBlockWithTransactions\022(.com.suplin" +
-      "k.wallet.grpc.GetBlockRequest\032\036.com.supl" +
-      "ink.wallet.grpc.Block\022r\n\024GetTransactionB" +
-      "yHash\0224.com.suplink.wallet.grpc.GetTrans" +
-      "actionByHashRequest\032$.com.suplink.wallet" +
-      ".grpc.Transaction\022|\n\030GetTransactionsByAd" +
-      "dress\0228.com.suplink.wallet.grpc.GetTrans" +
-      "actionsByAddressRequest\032$.com.suplink.wa" +
-      "llet.grpc.Transaction0\001B(\n\027com.suplink.w" +
-      "allet.grpcB\013WalletProtoP\001b\006proto3"
+      "ess\030\002 \001(\t\"c\n\030GetAccountBalanceRequest\0226\n" +
+      "\nchain_type\030\001 \001(\0162\".com.suplink.wallet.g" +
+      "rpc.ChainType\022\017\n\007address\030\002 \001(\t\",\n\031GetAcc" +
+      "ountBalanceResponse\022\017\n\007balance\030\001 \001(\t\"*\n\007" +
+      "TxInput\022\017\n\007address\030\001 \001(\t\022\016\n\006amount\030\002 \001(\t" +
+      "\"+\n\010TxOutput\022\017\n\007address\030\001 \001(\t\022\016\n\006amount\030" +
+      "\002 \001(\t\"t\n\005Block\022\014\n\004hash\030\001 \001(\t\022\016\n\006height\030\002" +
+      " \001(\003\022\021\n\ttimestamp\030\003 \001(\003\022:\n\014transactions\030" +
+      "\004 \003(\0132$.com.suplink.wallet.grpc.Transact" +
+      "ion\"\316\001\n\013Transaction\022\014\n\004hash\030\001 \001(\t\022\022\n\nblo" +
+      "ck_hash\030\002 \001(\t\022\024\n\014block_height\030\003 \001(\003\022\021\n\tt" +
+      "imestamp\030\004 \001(\003\022\016\n\006status\030\005 \001(\t\0220\n\006inputs" +
+      "\030\006 \003(\0132 .com.suplink.wallet.grpc.TxInput" +
+      "\0222\n\007outputs\030\007 \003(\0132!.com.suplink.wallet.g" +
+      "rpc.TxOutput*&\n\tChainType\022\007\n\003BTC\020\000\022\007\n\003ET" +
+      "H\020\001\022\007\n\003SOL\020\002*H\n\016BtcAddressType\022\013\n\007UNKNOW" +
+      "N\020\000\022\t\n\005P2PKH\020\001\022\n\n\006P2WPKH\020\002\022\010\n\004P2SH\020\003\022\010\n\004" +
+      "P2TR\020\0042\245\006\n\rWalletService\022q\n\016ConvertAddre" +
+      "ss\022..com.suplink.wallet.grpc.ConvertAddr" +
+      "essRequest\032/.com.suplink.wallet.grpc.Con" +
+      "vertAddressResponse\022k\n\014ValidAddress\022,.co" +
+      "m.suplink.wallet.grpc.ValidAddressReques" +
+      "t\032-.com.suplink.wallet.grpc.ValidAddress" +
+      "Response\022`\n\016GetLatestBlock\022..com.suplink" +
+      ".wallet.grpc.GetLatestBlockRequest\032\036.com" +
+      ".suplink.wallet.grpc.Block\022d\n\030GetBlockWi" +
+      "thTransactions\022(.com.suplink.wallet.grpc" +
+      ".GetBlockRequest\032\036.com.suplink.wallet.gr" +
+      "pc.Block\022r\n\024GetTransactionByHash\0224.com.s" +
+      "uplink.wallet.grpc.GetTransactionByHashR" +
+      "equest\032$.com.suplink.wallet.grpc.Transac" +
+      "tion\022|\n\030GetTransactionsByAddress\0228.com.s" +
+      "uplink.wallet.grpc.GetTransactionsByAddr" +
+      "essRequest\032$.com.suplink.wallet.grpc.Tra" +
+      "nsaction0\001\022z\n\021GetAccountBalance\0221.com.su" +
+      "plink.wallet.grpc.GetAccountBalanceReque" +
+      "st\0322.com.suplink.wallet.grpc.GetAccountB" +
+      "alanceResponseB(\n\027com.suplink.wallet.grp" +
+      "cB\013WalletProtoP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -187,26 +204,38 @@ public final class WalletProto {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_com_suplink_wallet_grpc_GetTransactionsByAddressRequest_descriptor,
         new java.lang.String[] { "ChainType", "Address", });
-    internal_static_com_suplink_wallet_grpc_TxInput_descriptor =
+    internal_static_com_suplink_wallet_grpc_GetAccountBalanceRequest_descriptor =
       getDescriptor().getMessageTypes().get(8);
+    internal_static_com_suplink_wallet_grpc_GetAccountBalanceRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_com_suplink_wallet_grpc_GetAccountBalanceRequest_descriptor,
+        new java.lang.String[] { "ChainType", "Address", });
+    internal_static_com_suplink_wallet_grpc_GetAccountBalanceResponse_descriptor =
+      getDescriptor().getMessageTypes().get(9);
+    internal_static_com_suplink_wallet_grpc_GetAccountBalanceResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_com_suplink_wallet_grpc_GetAccountBalanceResponse_descriptor,
+        new java.lang.String[] { "Balance", });
+    internal_static_com_suplink_wallet_grpc_TxInput_descriptor =
+      getDescriptor().getMessageTypes().get(10);
     internal_static_com_suplink_wallet_grpc_TxInput_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_com_suplink_wallet_grpc_TxInput_descriptor,
         new java.lang.String[] { "Address", "Amount", });
     internal_static_com_suplink_wallet_grpc_TxOutput_descriptor =
-      getDescriptor().getMessageTypes().get(9);
+      getDescriptor().getMessageTypes().get(11);
     internal_static_com_suplink_wallet_grpc_TxOutput_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_com_suplink_wallet_grpc_TxOutput_descriptor,
         new java.lang.String[] { "Address", "Amount", });
     internal_static_com_suplink_wallet_grpc_Block_descriptor =
-      getDescriptor().getMessageTypes().get(10);
+      getDescriptor().getMessageTypes().get(12);
     internal_static_com_suplink_wallet_grpc_Block_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_com_suplink_wallet_grpc_Block_descriptor,
         new java.lang.String[] { "Hash", "Height", "Timestamp", "Transactions", });
     internal_static_com_suplink_wallet_grpc_Transaction_descriptor =
-      getDescriptor().getMessageTypes().get(11);
+      getDescriptor().getMessageTypes().get(13);
     internal_static_com_suplink_wallet_grpc_Transaction_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_com_suplink_wallet_grpc_Transaction_descriptor,

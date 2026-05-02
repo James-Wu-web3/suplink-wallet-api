@@ -20,19 +20,11 @@ public interface TxOutputOrBuilder extends
       getAddressBytes();
 
   /**
-   * <pre>
-   * Use string for precision
-   * </pre>
-   *
    * <code>string amount = 2;</code>
    * @return The amount.
    */
   java.lang.String getAmount();
   /**
-   * <pre>
-   * Use string for precision
-   * </pre>
-   *
    * <code>string amount = 2;</code>
    * @return The bytes for amount.
    */
