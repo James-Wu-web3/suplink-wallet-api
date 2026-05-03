@@ -30,4 +30,22 @@ public interface TxInputOrBuilder extends
    */
   com.google.protobuf.ByteString
       getAmountBytes();
+
+  /**
+   * <code>string prev_tx_id = 3;</code>
+   * @return The prevTxId.
+   */
+  java.lang.String getPrevTxId();
+  /**
+   * <code>string prev_tx_id = 3;</code>
+   * @return The bytes for prevTxId.
+   */
+  com.google.protobuf.ByteString
+      getPrevTxIdBytes();
+
+  /**
+   * <code>int32 prev_output_index = 4;</code>
+   * @return The prevOutputIndex.
+   */
+  int getPrevOutputIndex();
 }

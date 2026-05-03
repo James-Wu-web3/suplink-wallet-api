@@ -178,9 +178,13 @@ public class BitcoinServiceImpl extends AbstractChainService {
             List<Map<String, Object>> vin = (List<Map<String, Object>>) txMap.get("vin");
             for (Map<String, Object> inputMap : vin) {
                 if (inputMap.containsKey("coinbase")) {
-                    inputs.add(new TxInputDto("coinbase", BigDecimal.ZERO));
+                    inputs.add(new TxInputDto("coinbase", BigDecimal.ZERO, null, null));
                 } else {
-                    inputs.add(new TxInputDto("unknown", BigDecimal.ZERO));
+                    String prevTxId = (String) inputMap.get("txid");
+                    Integer prevVout = ((Number) inputMap.get("vout")).intValue();
+                    // Address and amount are null because they require a recursive RPC call,
+                    // which is inefficient and should be handled by a dedicated indexer.
+                    inputs.add(new TxInputDto(null, null, prevTxId, prevVout));
                 }
             }
         }

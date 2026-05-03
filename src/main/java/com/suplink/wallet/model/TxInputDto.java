@@ -10,9 +10,17 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TxInputDto {
+    // The address providing the funds.
+    // Note: This can be null if not resolved, as it requires fetching the previous transaction.
     private String address;
+
+    // The amount of the UTXO being spent.
+    // Note: This can be null if not resolved.
     private BigDecimal amount;
-    // For UTXO models, you might also want to include the source transaction hash and index
-    // private String txId;
-    // private int vout;
+
+    // The transaction ID of the previous output being spent.
+    private String prevTxId;
+
+    // The index of the output in the previous transaction.
+    private Integer prevOutputIndex;
 }

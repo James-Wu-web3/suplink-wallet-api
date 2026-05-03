@@ -6,7 +6,6 @@ import com.suplink.wallet.model.TxInputDto;
 import com.suplink.wallet.model.TxOutputDto;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.stream.Collectors;
 
 @Component
@@ -66,8 +65,10 @@ public class GrpcMapper {
             return TxInput.newBuilder().build();
         }
         return TxInput.newBuilder()
-                .setAddress(dto.getAddress() != null ? dto.getAddress() : "")
+                .setAddress(dto.getAddress() != null ? dto.getAddress() : "unknown") // Provide a default for gRPC
                 .setAmount(dto.getAmount() != null ? dto.getAmount().toPlainString() : "0")
+                .setPrevTxId(dto.getPrevTxId() != null ? dto.getPrevTxId() : "")
+                .setPrevOutputIndex(dto.getPrevOutputIndex() != null ? dto.getPrevOutputIndex() : -1)
                 .build();
     }
 

@@ -80,6 +80,8 @@ message GetAccountBalanceResponse {
 message TxInput {
     string address = 1;
     string amount = 2;
+    string prev_tx_id = 3;
+    int32 prev_output_index = 4;
 }
 
 message TxOutput {

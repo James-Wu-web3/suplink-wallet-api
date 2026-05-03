@@ -18,6 +18,7 @@ private static final long serialVersionUID = 0L;
   private TxInput() {
     address_ = "";
     amount_ = "";
+    prevTxId_ = "";
   }
 
   @java.lang.Override
@@ -118,6 +119,56 @@ private static final long serialVersionUID = 0L;
     }
   }
 
+  public static final int PREV_TX_ID_FIELD_NUMBER = 3;
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object prevTxId_ = "";
+  /**
+   * <code>string prev_tx_id = 3;</code>
+   * @return The prevTxId.
+   */
+  @java.lang.Override
+  public java.lang.String getPrevTxId() {
+    java.lang.Object ref = prevTxId_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      prevTxId_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>string prev_tx_id = 3;</code>
+   * @return The bytes for prevTxId.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getPrevTxIdBytes() {
+    java.lang.Object ref = prevTxId_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      prevTxId_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int PREV_OUTPUT_INDEX_FIELD_NUMBER = 4;
+  private int prevOutputIndex_ = 0;
+  /**
+   * <code>int32 prev_output_index = 4;</code>
+   * @return The prevOutputIndex.
+   */
+  @java.lang.Override
+  public int getPrevOutputIndex() {
+    return prevOutputIndex_;
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -138,6 +189,12 @@ private static final long serialVersionUID = 0L;
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(amount_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 2, amount_);
     }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(prevTxId_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, prevTxId_);
+    }
+    if (prevOutputIndex_ != 0) {
+      output.writeInt32(4, prevOutputIndex_);
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -152,6 +209,13 @@ private static final long serialVersionUID = 0L;
     }
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(amount_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, amount_);
+    }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(prevTxId_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, prevTxId_);
+    }
+    if (prevOutputIndex_ != 0) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeInt32Size(4, prevOutputIndex_);
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -172,6 +236,10 @@ private static final long serialVersionUID = 0L;
         .equals(other.getAddress())) return false;
     if (!getAmount()
         .equals(other.getAmount())) return false;
+    if (!getPrevTxId()
+        .equals(other.getPrevTxId())) return false;
+    if (getPrevOutputIndex()
+        != other.getPrevOutputIndex()) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -187,6 +255,10 @@ private static final long serialVersionUID = 0L;
     hash = (53 * hash) + getAddress().hashCode();
     hash = (37 * hash) + AMOUNT_FIELD_NUMBER;
     hash = (53 * hash) + getAmount().hashCode();
+    hash = (37 * hash) + PREV_TX_ID_FIELD_NUMBER;
+    hash = (53 * hash) + getPrevTxId().hashCode();
+    hash = (37 * hash) + PREV_OUTPUT_INDEX_FIELD_NUMBER;
+    hash = (53 * hash) + getPrevOutputIndex();
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -320,6 +392,8 @@ private static final long serialVersionUID = 0L;
       bitField0_ = 0;
       address_ = "";
       amount_ = "";
+      prevTxId_ = "";
+      prevOutputIndex_ = 0;
       return this;
     }
 
@@ -358,6 +432,12 @@ private static final long serialVersionUID = 0L;
       }
       if (((from_bitField0_ & 0x00000002) != 0)) {
         result.amount_ = amount_;
+      }
+      if (((from_bitField0_ & 0x00000004) != 0)) {
+        result.prevTxId_ = prevTxId_;
+      }
+      if (((from_bitField0_ & 0x00000008) != 0)) {
+        result.prevOutputIndex_ = prevOutputIndex_;
       }
     }
 
@@ -415,6 +495,14 @@ private static final long serialVersionUID = 0L;
         bitField0_ |= 0x00000002;
         onChanged();
       }
+      if (!other.getPrevTxId().isEmpty()) {
+        prevTxId_ = other.prevTxId_;
+        bitField0_ |= 0x00000004;
+        onChanged();
+      }
+      if (other.getPrevOutputIndex() != 0) {
+        setPrevOutputIndex(other.getPrevOutputIndex());
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -451,6 +539,16 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000002;
               break;
             } // case 18
+            case 26: {
+              prevTxId_ = input.readStringRequireUtf8();
+              bitField0_ |= 0x00000004;
+              break;
+            } // case 26
+            case 32: {
+              prevOutputIndex_ = input.readInt32();
+              bitField0_ |= 0x00000008;
+              break;
+            } // case 32
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -608,6 +706,110 @@ private static final long serialVersionUID = 0L;
       checkByteStringIsUtf8(value);
       amount_ = value;
       bitField0_ |= 0x00000002;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object prevTxId_ = "";
+    /**
+     * <code>string prev_tx_id = 3;</code>
+     * @return The prevTxId.
+     */
+    public java.lang.String getPrevTxId() {
+      java.lang.Object ref = prevTxId_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        prevTxId_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>string prev_tx_id = 3;</code>
+     * @return The bytes for prevTxId.
+     */
+    public com.google.protobuf.ByteString
+        getPrevTxIdBytes() {
+      java.lang.Object ref = prevTxId_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        prevTxId_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>string prev_tx_id = 3;</code>
+     * @param value The prevTxId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPrevTxId(
+        java.lang.String value) {
+      if (value == null) { throw new NullPointerException(); }
+      prevTxId_ = value;
+      bitField0_ |= 0x00000004;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string prev_tx_id = 3;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearPrevTxId() {
+      prevTxId_ = getDefaultInstance().getPrevTxId();
+      bitField0_ = (bitField0_ & ~0x00000004);
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>string prev_tx_id = 3;</code>
+     * @param value The bytes for prevTxId to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPrevTxIdBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) { throw new NullPointerException(); }
+      checkByteStringIsUtf8(value);
+      prevTxId_ = value;
+      bitField0_ |= 0x00000004;
+      onChanged();
+      return this;
+    }
+
+    private int prevOutputIndex_ ;
+    /**
+     * <code>int32 prev_output_index = 4;</code>
+     * @return The prevOutputIndex.
+     */
+    @java.lang.Override
+    public int getPrevOutputIndex() {
+      return prevOutputIndex_;
+    }
+    /**
+     * <code>int32 prev_output_index = 4;</code>
+     * @param value The prevOutputIndex to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPrevOutputIndex(int value) {
+
+      prevOutputIndex_ = value;
+      bitField0_ |= 0x00000008;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int32 prev_output_index = 4;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearPrevOutputIndex() {
+      bitField0_ = (bitField0_ & ~0x00000008);
+      prevOutputIndex_ = 0;
       onChanged();
       return this;
     }
